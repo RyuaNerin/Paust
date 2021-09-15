@@ -26,6 +26,14 @@
 
 ![shortname](README/shortname.png)
 
+### 파 서버 표시 끄기
+
+![hideserver](README/hideserver.png)
+
+### 임무 정보 표시 끄기
+
+![hideserver](README/removeopt.png)
+
 ### Javascript
 
 - 반환값이 true 일 때 파티를 표시하고, false 일 때 파티를 숨깁니다.
@@ -153,7 +161,7 @@ var party = {
 };
 ```
 
-#### 직업고유번호
+#### 직업 고유번호
 
 - 각 직업의 고유번호를 담고 있습니다.
 
