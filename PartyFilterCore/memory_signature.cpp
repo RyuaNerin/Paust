@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <TlHelp32.h>
 
@@ -41,6 +42,8 @@ void memory_signature::gen_bch()
         this->bch[idx] = diff;
     for (idx = last - diff; idx < last; ++idx)
         this->bch[this->value[idx]] = last - idx;
+
+    debug_log(L"gen_bch : ok");
 }
 
 const uint8_t* memory_signature::find_signature(const uint8_t* baseAddr, const size_t baseSize) const
@@ -84,7 +87,7 @@ bool get_ffxiv_module(DWORD pid, uint8_t** modBaseAddr, size_t* modBaseSize)
             {
                 if (std::wcscmp(snapEntry.szModule, L"ffxiv_dx11.exe") == 0)
                 {
-                    *modBaseAddr = reinterpret_cast<uint8_t*>(snapEntry.modBaseAddr);
+                    *modBaseAddr = snapEntry.modBaseAddr;
                     *modBaseSize = static_cast<size_t>(snapEntry.modBaseSize);
                     res = true;
                     break;
@@ -132,7 +135,7 @@ memory_signature::memory_signature(const std::string& str)
 void* memory_signature::scan() const
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // ÆÄÀÌ³Î ÆÇÅ¸Áö ¸ÞÀÎ ¸ðµâ ÁÖ¼Ò ¾ò¾î¿À±â
+    // íŒŒì´ë„ íŒíƒ€ì§€ ë©”ì¸ ëª¨ë“ˆ ì£¼ì†Œ ì–»ì–´ì˜¤ê¸°
     auto pid = GetCurrentProcessId();
     debug_log(L"pid %d", pid);
 
@@ -147,7 +150,7 @@ void* memory_signature::scan() const
     debug_log(L"Module found : %p / %p", baseAddr, baseSize);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    // À§Ä¡ °è»ê
+    // ìœ„ì¹˜ ê³„ì‚°
     auto ptr = (LPVOID)this->find_signature(baseAddr, baseSize);
     if (ptr == nullptr)
     {

@@ -50,7 +50,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
     CloseHandle(hProc);
 
-    hModule = GetModuleHandle(NULL);
+    hModule = GetModuleHandleW(NULL);
     if (hModule == NULL)
     {
         MessageBoxW(NULL, L"No permission OR Final Fantasy XIV is not running", L"PartyFilterInjector", 0);
@@ -85,15 +85,14 @@ BOOL isInjected(DWORD pid, LPCWSTR moduleName, PBYTE* pDllBaseAddress)
 {
     BOOL res = FALSE;
 
-    MODULEENTRY32 snapEntry = { 0 };
+    MODULEENTRY32W snapEntry = { 0 };
     HANDLE hSnapshot;
 
-    snapEntry.dwSize = sizeof(MODULEENTRY32);
+    snapEntry.dwSize = sizeof(MODULEENTRY32W);
     hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
-    if (hSnapshot == NULL)
-        return FALSE;
+    if (hSnapshot == NULL) return FALSE;
 
-    if (Module32First(hSnapshot, &snapEntry))
+    if (Module32FirstW(hSnapshot, &snapEntry))
     {
         do
         {
@@ -103,7 +102,7 @@ BOOL isInjected(DWORD pid, LPCWSTR moduleName, PBYTE* pDllBaseAddress)
                 res = TRUE;
                 break;
             }
-        } while (Module32Next(hSnapshot, &snapEntry));
+        } while (Module32NextW(hSnapshot, &snapEntry));
     }
     CloseHandle(hSnapshot);
 
@@ -125,7 +124,7 @@ BOOL injectDll(DWORD pid, LPCWSTR path)
 
     DWORD exitCode;
 
-    hKernel32 = GetModuleHandle(L"kernel32.dll");
+    hKernel32 = GetModuleHandleW(L"kernel32.dll");
     if (hKernel32 == NULL)
         return FALSE;
 
@@ -173,7 +172,7 @@ BOOL uninjectDll(DWORD pid, PBYTE pDllBaseAddress)
 
     DWORD exitCode;
 
-    hKernel32 = GetModuleHandle(L"kernel32.dll");
+    hKernel32 = GetModuleHandleW(L"kernel32.dll");
     if (hKernel32 == NULL)
         return FALSE;
 

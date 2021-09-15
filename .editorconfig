@@ -7,6 +7,10 @@ charset = utf-8
 insert_final_newline = true
 
 ; 4-column tab indentation
-[*.{c, cpp}]
+[*.{c,cpp}]
+indent_style = space
+indent_size = 4
+
+[*.{cs,xaml}]
 indent_style = space
 indent_size = 4

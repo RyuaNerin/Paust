@@ -13,9 +13,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{c29d0d53-137e-453e-b33f-dd46237e0054}</ProjectGuid>
-    <RootNamespace>PartyFilterInjector</RootNamespace>
+    <ProjectGuid>{6cdd2c2b-c4ef-42a3-8dcf-00175f5a257f}</ProjectGuid>
+    <RootNamespace>PartyFilterCoreTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>PartyFilterCoreTest</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -46,10 +47,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\$(Configuration)\</OutDir>
+    <IncludePath>$(SolutionDir)\lib\duktape-2.6.0;$(SolutionDir)\lib\jsoncpp-1.9.4;$(SolutionDir)\lib\minhook-1.3.3\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\$(Configuration)\</OutDir>
+    <IncludePath>$(SolutionDir)\lib\duktape-2.6.0;$(SolutionDir)\lib\jsoncpp-1.9.4;$(SolutionDir)\lib\minhook-1.3.3\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -59,11 +62,12 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,17 +80,46 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="maincpp.cpp" />
+    <ClCompile Include="..\lib\duktape-2.6.0\duktape.cpp" />
+    <ClCompile Include="..\lib\jsoncpp-1.9.4\jsoncpp.cpp" />
+    <ClCompile Include="..\lib\minhook-1.3.3\src\buffer.c" />
+    <ClCompile Include="..\lib\minhook-1.3.3\src\hde\hde32.c" />
+    <ClCompile Include="..\lib\minhook-1.3.3\src\hde\hde64.c" />
+    <ClCompile Include="..\lib\minhook-1.3.3\src\hook.c" />
+    <ClCompile Include="..\lib\minhook-1.3.3\src\trampoline.c" />
+    <ClCompile Include="..\PartyFilterCore\debug_log.cpp" />
+    <ClCompile Include="..\PartyFilterCore\ffxiv_data.cpp" />
+    <ClCompile Include="..\PartyFilterCore\javascript_engine.cpp" />
+    <ClCompile Include="..\PartyFilterCore\utils.cpp" />
+    <ClCompile Include="duk_print_alert.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\buffer.h" />
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\hde32.h" />
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\hde64.h" />
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\pstdint.h" />
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\table32.h" />
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\table64.h" />
+    <ClInclude Include="..\lib\minhook-1.3.3\src\MinHook.h" />
+    <ClInclude Include="..\lib\minhook-1.3.3\src\trampoline.h" />
+    <ClInclude Include="..\PartyFilterCore\debug_log.h" />
+    <ClInclude Include="..\PartyFilterCore\defer.h" />
+    <ClInclude Include="..\PartyFilterCore\ffxiv_data.h" />
+    <ClInclude Include="..\PartyFilterCore\javascript.h" />
+    <ClInclude Include="..\PartyFilterCore\utils.h" />
+    <ClInclude Include="duk_print_alert.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

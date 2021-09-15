@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PartyFilter")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyCopyright("CopyRight (C) By RyuaNerin")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
