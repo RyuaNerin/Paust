@@ -1,6 +1,6 @@
-# PartyFilter
+# Paust
 
-- PartyFilter 는 파이널 판타지 14 인게임 파티 찾기에 다양한 필터링과 유틸 기능을 제공하는 프로그램입니다.
+- Paust 는 파이널 판타지 14 인게임 파티 찾기에 다양한 필터링과 유틸 기능을 제공하는 프로그램입니다.
 
 - 이 프로그램의 사용으로 인한 모든 피해는 사용자에게 있고, 제작자는 그 어떤 책임도 지지 않습니다.
 
@@ -18,171 +18,235 @@
 
 - 다운로드 받은 파일을 실행해주세요.
 
-### 상수들
+### 긴 닉네임 줄이기
 
-- [party 변수](#party_변수_)
-- [파티슬롯](#파티슬롯)
-- [직업](#직업)
+![shortname](README/shortname.png)
 
-#### Party 변수
+### Javascript
 
-- party 변수는 아래와 같은 형태의 구조를 가집니다.
+- 반환값이 true 일 때 파티를 표시하고, false 일 때 파티를 숨깁니다.
 
-```json
-{
-    "owner_name"       : "륜아린", // 파티 모집자 이름
-    "description"      : "파티찾기 테스트입니다.",
-    "remaining_seconds": 3038,
-    "content_category" : 0,
-    "content_id"       : 748,
-    "is_roulette"      : false,
-    "party_count"      : 1,
-    "is_private"       : false,
-    "is_24"            : false,
-    "same_server"      : false,
-    "no_dup_job"       : false,
-    "welcome_beginner" : false,
-    "undersize_player" : false,
-    "minimum_level"    : 0,
-    "silence_echo"     : false,
-    "item_rule"        : 0,
-    "slot_count"       : 8,
+- 예시1 : 파티 설명에 `2상` 혹은 `파밍`이 포함된 파티 제외
+
+    ```js
+    party.description.indexOf('2상') == -1 && party.description.indexOf('파밍') == -1
+    ```
+
+- 예시2 : 적마도사를 모집중이며, 파티에 다른 캐스터가 없는 파티만 표시.
+
+    ```js
+    (function() {
+        var anyCaster = false;
+        for (var i = 0; i < party.slot_count; i++) {
+            var slot = party.slot[i];
+
+            // 다른 캐스터 제외
+            if (slot.in_slot == jobs.blm || slot.in_slot == jobs.smn || slot.in_slot == jobs.rdm) {
+                return false;
+            }
+
+            // 확직예약 제외
+            if (slot.available_jobs == 1 && (slot.blm || slot.smn || slot.rdm)) {
+                return false;
+            }
+            
+            // 적마도사 모집 중인 자리가 있음.
+            if (slot.available_jobs > 1 && slot.rdm) {
+                anyCaster = true;
+            }
+        }
+
+        return anyCaster;
+    })()
+    ```
+
+- [party 변수](#party_변수)
+- [직업 고유번호](#직업_고유번호)
+- [모집 직업 플래그](#모집_직업_플래그)
+- [알려진 임무](#알려진_임무)
+- [전리품 규칙](#전리품_규칙)
+
+#### party 변수
+
+- party는 아래와 같은 형태의 구조를 가지고 있으며, 이를 이용하여 파티 필터링을 진행합니다.
+
+```javascript
+var party = {
+    "owner_name"       : "륜아린",                  // 파티 모집자 이름
+    "description"      : "파티찾기 테스트입니다.",  // 모집 설명
+    "remaining_seconds": 3038,      // 모집 남은 시간
+    "content_category" : 0,         // 모집 카테고리
+    "content_id"       : 748,       // 임무 종류
+    "is_roulette"      : false,     // 무작위 임무?
+    "party_count"      : 1,         // 파티 수
+    "is_private"       : false,     // 비공개 파티
+    "is_24"            : false,     // 24인 파티?
+    "same_server"      : false,     // 같은 서버만 모집
+    "no_dup_job"       : false,     // 잡 중복 없음
+    "welcome_beginner" : false,     // 초보자 환영
+    "undersize_player" : false,     // 인원수 제한 해제
+    "minimum_level"    : 0,         // 입장 최소 레벨
+    "silence_echo"     : false,     // 초월하는 힘 없음
+    "item_rule"        : 0,         // 전리품 규칙 (하단 item_rules 참조)
+    "slot_count"       : 8,         // 모집 인원 수
     "slot": [
         {
-            "pgl": false,
-            "mrd": false,
-            "lnc": false,
-            "arc": false,
-            "cnj": false,
-            "thm": false,
-            "pld": false,
-            "mnk": false,
-            "war": false,
-            "drg": false,
-            "brd": false,
-            "whm": false,
-            "blm": false,
-            "acn": false,
-            "smn": false,
-            "sch": false,
-            "rog": false,
-            "nin": false,
-            "mch": false,
-            "drk": false,
-            "ast": false,
-            "sam": false,
-            "rdm": false,
-            "blu": false,
-            "gnb": false,
-            "dnc": false,
-            "_tank": false,
-            "_heal": false,
-            "_deal": false,
-            "_deal_meele": false,
-            "_deal_range": false,
-            "_deal_caster": false,
-            "gld": false,
-            "in_slot": 19,
-            "_raw": 256,
-            "available_jobs": 0
+            "in_slot": 19, // 현재 자리에 있는 사람의 직업. 0 이면 모집 중
+            
+            "available_jobs": 0 // 모집중인 직업 수
+            "_tank"       : false, // 탱커 모집 중
+            "_heal"       : false, // 힐러 모집 중
+            "_deal"       : false, // 딜러 모집 중
+            "_deal_meele" : false, // 근거리 모집 중
+            "_deal_range" : false, // 유격대 모집 중
+            "_deal_caster": false, // 캐스터 모집 중
+
+            // 이하 모집 중인 직업
+            "_raw": 256,  // 모집중인 직업 원시값 (모집 직업 플래그 참조)
+
+            "gld": false, // 검술사
+            "pld": false, // 나이트
+            "mrd": false, // 도끼술사
+            "war": false, // 전사
+            "drk": false, // 암흑기사
+            "gnb": false, // 건브레이커
+
+            "cnj": false, // 환술사
+            "whm": false, // 백마도사
+            "sch": false, // 학자
+            "ast": false, // 점성술사
+
+            "pgl": false, // 격투가
+            "mnk": false, // 몽크
+            "lnc": false, // 창술사
+            "drg": false, // 용기사
+            "rog": false, // 쌍검사
+            "nin": false, // 닌자
+            "sam": false, // 사무라이
+            
+            "arc": false, // 궁술사
+            "brd": false, // 음유시인
+            "mch": false, // 기공사
+            "dnc": false, // 무도가
+            
+            "thm": false, // 주술사
+            "blm": false, // 흑마도사
+            "acn": false, // 비술사
+            "smn": false, // 소환사
+            "rdm": false, // 적마도사
+
+            "blu": false, // 청마도사
         },
         ...
     ]
-}
+};
 ```
 
 #### 직업고유번호
 
-|상수|설명|
-|:-:|-|
-jobs.adv	(int) 모험가
-jobs.gla	(int) 검술사
-jobs.pgl	(int) 격투사
-jobs.mrd	(int) 도끼술사
-jobs.lnc	(int) 창술사
-jobs.arc	(int) 궁술사
-jobs.cnj	(int) 환술사
-jobs.thm	(int) 주술사
-jobs.crp	(int) 목수
-jobs.bsm	(int) 대장장이
-jobs.arm	(int) 갑주제작사
-jobs.gsm	(int) 보석공예가
-jobs.ltw	(int) 가죽공예가
-jobs.wvr	(int) 재봉사
-jobs.alc	(int) 연금술사
-jobs.cul	(int) 요리사
-jobs.min	(int) 광부
-jobs.btn	(int) 원예가
-jobs.fsh	(int) 어부
-jobs.pld	(int) 나이트
-jobs.mnk	(int) 몽크
-jobs.war	(int) 전사
-jobs.drg	(int) 용기사
-jobs.brd	(int) 음유시인
-jobs.whm	(int) 백마도사
-jobs.blm	(int) 흑마도사
-jobs.acn	(int) 비술사
-jobs.smn	(int) 소환사
-jobs.sch	(int) 학자
-jobs.rog	(int) 쌍검사
-jobs.nin	(int) 닌자
-jobs.mch	(int) 기공사
-jobs.drk	(int) 암흑기사
-jobs.ast	(int) 점성술사
-jobs.sam	(int) 사무라이
-jobs.rdm	(int) 적마도사
-jobs.blu	(int) 청마도사
-jobs.gnb	(int) 건브레이커
-jobs.dnc	(int) 무도가
+- 각 직업의 고유번호를 담고 있습니다.
 
+|상수 이름|값|설명|
+|-|-|-|
+|`jobs.gla`|`1`|검술사|
+|`jobs.pgl`|`2`|격투사|
+|`jobs.mrd`|`3`|도끼술사|
+|`jobs.lnc`|`4`|창술사|
+|`jobs.arc`|`5`|궁술사|
+|`jobs.cnj`|`6`|환술사|
+|`jobs.thm`|`7`|주술사|
+|`jobs.crp`|`8`|목수|
+|`jobs.bsm`|`9`|대장장이|
+|`jobs.arm`|`10`|갑주제작사|
+|`jobs.gsm`|`11`|보석공예가|
+|`jobs.ltw`|`12`|가죽공예가|
+|`jobs.wvr`|`13`|재봉사|
+|`jobs.alc`|`14`|연금술사|
+|`jobs.cul`|`15`|요리사|
+|`jobs.min`|`16`|광부|
+|`jobs.btn`|`17`|원예가|
+|`jobs.fsh`|`18`|어부|
+|`jobs.pld`|`19`|나이트|
+|`jobs.mnk`|`20`|몽크|
+|`jobs.war`|`21`|전사|
+|`jobs.drg`|`22`|용기사|
+|`jobs.brd`|`23`|음유시인|
+|`jobs.whm`|`24`|백마도사|
+|`jobs.blm`|`25`|흑마도사|
+|`jobs.acn`|`26`|비술사|
+|`jobs.smn`|`27`|소환사|
+|`jobs.sch`|`28`|학자|
+|`jobs.rog`|`29`|쌍검사|
+|`jobs.nin`|`30`|닌자|
+|`jobs.mch`|`31`|기공사|
+|`jobs.drk`|`32`|암흑기사|
+|`jobs.ast`|`33`|점성술사|
+|`jobs.sam`|`34`|사무라이|
+|`jobs.rdm`|`35`|적마도사|
+|`jobs.blu`|`36`|청마도사|
+|`jobs.gnb`|`37`|건브레이커|
+|`jobs.dnc`|`38`|무도가|
 
-slot_flags\.$			tank				(int) 탱커
-slot_flags\.$			heal				(int) 힐러
-slot_flags\.$			deal				(int) 딜러
-slot_flags\.$			deal_meele			(int) 근딜
-slot_flags\.$			deal_range			(int) 원딜
-slot_flags\.$			deal_caster			(int) 캐스터
-slot_flags\.$			pgl					(int) 격투가
-slot_flags\.$			mrd					(int) 도끼술사
-slot_flags\.$			lnc					(int) 창술사
-slot_flags\.$			arc					(int) 궁술사
-slot_flags\.$			cnj					(int) 환술사
-slot_flags\.$			thm					(int) 주술사
-slot_flags\.$			pld					(int) 나이트
-slot_flags\.$			mnk					(int) 몽크
-slot_flags\.$			war					(int) 전사
-slot_flags\.$			drg					(int) 용기사
-slot_flags\.$			brd					(int) 음유시인
-slot_flags\.$			whm					(int) 백마도사
-slot_flags\.$			blm					(int) 흑마도사
-slot_flags\.$			acn					(int) 비술사
-slot_flags\.$			smn					(int) 소환사
-slot_flags\.$			sch					(int) 학자
-slot_flags\.$			rog					(int) 쌍검사
-slot_flags\.$			nin					(int) 닌자
-slot_flags\.$			mch					(int) 기공사
-slot_flags\.$			drk					(int) 암흑기사
-slot_flags\.$			ast					(int) 점성술사
-slot_flags\.$			sam					(int) 사무라이
-slot_flags\.$			rdm					(int) 적마도사
-slot_flags\.$			blu					(int) 청마도사
-slot_flags\.$			gnb					(int) 건브레이커
-slot_flags\.$			dnc					(int) 무도가
+#### 모집 직업 플래그
 
-content_ids\.$			e9s					(int) 희망의 낙원 에덴: 재생편(영웅) 1
-content_ids\.$			e10s				(int) 희망의 낙원 에덴: 재생편(영웅) 2
-content_ids\.$			e11s				(int) 희망의 낙원 에덴: 재생편(영웅) 3
-content_ids\.$			e12s				(int) 희망의 낙원 에덴: 재생편(영웅) 4
-content_ids\.$			gunnhildr			(int) 군힐드 사원
-content_ids\.$			gunnhildrs			(int) 군힐드 사원 (영웅)
-content_ids\.$			leviathan			(int) 환 리바이어선 토벌전
-content_ids\.$			diamond				(int) 극 다이아몬드 웨폰 포획작전
-content_ids\.$			bahamut				(int) 절 바하무트 토벌전
-content_ids\.$			ultima				(int) 절 알테마 웨폰 파괴작전
-content_ids\.$			alexander			(int) 절 알렉산더 토벌전
+- `party.slot[##]` 의 _raw 값이며, 모집중인 직업이 or 연산으로 담겨 있습니다.
 
-item_rules\.$			normal				(int) 일반 전리품 규칙
-item_rules\.$			greed				(int) 선입찰 금지
-item_rules\.$			master				(int) 파티장 분배
+|상수 이름|값|설명|
+|-|-|-|
+|`slot_flags.tank`||탱커|
+|`slot_flags.heal`||힐러|
+|`slot_flags.deal`||딜러|
+|`slot_flags.deal_meele`||근딜|
+|`slot_flags.deal_range`||원딜|
+|`slot_flags.deal_caster`||캐스터|
+|`slot_flags.gld`|`1 <<  1`|검술사|
+|`slot_flags.pgl`|`1 <<  2`|격투사|
+|`slot_flags.mrd`|`1 <<  3`|도끼술사|
+|`slot_flags.lnc`|`1 <<  4`|창술사|
+|`slot_flags.arc`|`1 <<  5`|궁술사|
+|`slot_flags.cnj`|`1 <<  6`|환술사|
+|`slot_flags.thm`|`1 <<  7`|주술사|
+|`slot_flags.pld`|`1 <<  8`|나이트|
+|`slot_flags.mnk`|`1 <<  9`|몽크|
+|`slot_flags.war`|`1 << 10`|전사|
+|`slot_flags.drg`|`1 << 11`|용기사|
+|`slot_flags.brd`|`1 << 12`|음유시인|
+|`slot_flags.whm`|`1 << 13`|백마도사|
+|`slot_flags.blm`|`1 << 14`|흑마도사|
+|`slot_flags.acn`|`1 << 15`|비술사|
+|`slot_flags.smn`|`1 << 16`|소환사|
+|`slot_flags.sch`|`1 << 17`|학자|
+|`slot_flags.rog`|`1 << 18`|쌍검사|
+|`slot_flags.nin`|`1 << 19`|닌자|
+|`slot_flags.mch`|`1 << 20`|기공사|
+|`slot_flags.drk`|`1 << 21`|암흑기사|
+|`slot_flags.ast`|`1 << 22`|점성술사|
+|`slot_flags.sam`|`1 << 23`|사무라이|
+|`slot_flags.rdm`|`1 << 24`|적마도사|
+|`slot_flags.blu`|`1 << 25`|청마도사|
+|`slot_flags.gnb`|`1 << 26`|건브레이커|
+|`slot_flags.dnc`|`1 << 27`|무도가|
 
-```
+#### 알려진 임무
+
+|상수 이름|값|설명|
+|-|-|-|
+|`content_ids.e9s`       |`750`|희망의 낙원 에덴: 재생편(영웅) 1|
+|`content_ids.e10s`      |`748`|희망의 낙원 에덴: 재생편(영웅) 2|
+|`content_ids.e11s`      |`752`|희망의 낙원 에덴: 재생편(영웅) 3|
+|`content_ids.e12s`      |`759`|희망의 낙원 에덴: 재생편(영웅) 4|
+|`content_ids.gunnhildr` |`760`|군힐드 사원|
+|`content_ids.gunnhildrs`|`761`|군힐드 사원 (영웅)|
+|`content_ids.leviathan` |`776`|환 리바이어선 토벌전|
+|`content_ids.diamond`   |`782`|극 다이아몬드 웨폰 포획작전|
+|`content_ids.bahamut`   |`280`|절 바하무트 토벌전|
+|`content_ids.ultima`    |`539`|절 알테마 웨폰 파괴작전|
+|`content_ids.alexander` |`694`|절 알렉산더 토벌전|
+
+#### 전리품 규칙
+
+|상수 이름|값|설명|
+|-|-|-|
+|`item_rules.normal`|`0`|일반 전리품 규칙|
+|`item_rules.greed` |`1`|선입찰 금지|
+|`item_rules.master`|`2`|파티장 분배|

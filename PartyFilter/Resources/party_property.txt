@@ -17,41 +17,41 @@ party\.$				item_rule			(int) 입찰 방식 (0: 기본 / 1: 선입찰 금지 / 2
 party\.$				slot_count			(int) 남은 자리
 party\.$				slot				(array) 파티 자리
 
-party\.slot\[\d+\]\.$	in_slot				(int) 현재 자리에 있는 직업. 없으면 0
-party\.slot\[\d+\]\.$	available_jobs		(int) 현재 자리에 모집 중인 직업 수
-party\.slot\[\d+\]\.$	_raw				(int) 모집 직업 flags.
-party\.slot\[\d+\]\.$	tank				(bool) 탱커 모집 중
-party\.slot\[\d+\]\.$	heal				(bool) 힐러 모집 중
-party\.slot\[\d+\]\.$	deal				(bool) 딜러 모집 중
-party\.slot\[\d+\]\.$	deal_meele			(bool) 근딜 모집 중
-party\.slot\[\d+\]\.$	deal_range			(bool) 원딜 모집 중
-party\.slot\[\d+\]\.$	deal_caster			(bool) 캐스터 모집 중
-party\.slot\[\d+\]\.$	pgl					(bool) 격투가 모집 중
-party\.slot\[\d+\]\.$	mrd					(bool) 도끼술사 모집 중
-party\.slot\[\d+\]\.$	lnc					(bool) 창술사 모집 중
-party\.slot\[\d+\]\.$	arc					(bool) 궁술사 모집 중
-party\.slot\[\d+\]\.$	cnj					(bool) 환술사 모집 중
-party\.slot\[\d+\]\.$	thm					(bool) 주술사 모집 중
-party\.slot\[\d+\]\.$	pld					(bool) 나이트 모집 중
-party\.slot\[\d+\]\.$	mnk					(bool) 몽크 모집 중
-party\.slot\[\d+\]\.$	war					(bool) 전사 모집 중
-party\.slot\[\d+\]\.$	drg					(bool) 용기사 모집 중
-party\.slot\[\d+\]\.$	brd					(bool) 음유시인 모집 중
-party\.slot\[\d+\]\.$	whm					(bool) 백마도사 모집 중
-party\.slot\[\d+\]\.$	blm					(bool) 흑마도사 모집 중
-party\.slot\[\d+\]\.$	acn					(bool) 비술사 모집 중
-party\.slot\[\d+\]\.$	smn					(bool) 소환사 모집 중
-party\.slot\[\d+\]\.$	sch					(bool) 학자 모집 중
-party\.slot\[\d+\]\.$	rog					(bool) 쌍검사 모집 중
-party\.slot\[\d+\]\.$	nin					(bool) 닌자 모집 중
-party\.slot\[\d+\]\.$	mch					(bool) 기공사 모집 중
-party\.slot\[\d+\]\.$	drk					(bool) 암흑기사 모집 중
-party\.slot\[\d+\]\.$	ast					(bool) 점성술사 모집 중
-party\.slot\[\d+\]\.$	sam					(bool) 사무라이 모집 중
-party\.slot\[\d+\]\.$	rdm					(bool) 적마도사 모집 중
-party\.slot\[\d+\]\.$	blu					(bool) 청마도사 모집 중
-party\.slot\[\d+\]\.$	gnb					(bool) 건브레이커 모집 중
-party\.slot\[\d+\]\.$	dnc					(bool) 무도가 모집 중
+party\.slot\[(^\[)+\]\.$	in_slot				(int) 현재 자리에 있는 직업. 없으면 0
+party\.slot\[(^\[)+\]\.$	available_jobs		(int) 현재 자리에 모집 중인 직업 수
+party\.slot\[(^\[)+\]\.$	_raw				(int) 모집 직업 flags.
+party\.slot\[(^\[)+\]\.$	tank				(bool) 탱커 모집 중
+party\.slot\[(^\[)+\]\.$	heal				(bool) 힐러 모집 중
+party\.slot\[(^\[)+\]\.$	deal				(bool) 딜러 모집 중
+party\.slot\[(^\[)+\]\.$	deal_meele			(bool) 근딜 모집 중
+party\.slot\[(^\[)+\]\.$	deal_range			(bool) 원딜 모집 중
+party\.slot\[(^\[)+\]\.$	deal_caster			(bool) 캐스터 모집 중
+party\.slot\[(^\[)+\]\.$	pgl					(bool) 격투가 모집 중
+party\.slot\[(^\[)+\]\.$	mrd					(bool) 도끼술사 모집 중
+party\.slot\[(^\[)+\]\.$	lnc					(bool) 창술사 모집 중
+party\.slot\[(^\[)+\]\.$	arc					(bool) 궁술사 모집 중
+party\.slot\[(^\[)+\]\.$	cnj					(bool) 환술사 모집 중
+party\.slot\[(^\[)+\]\.$	thm					(bool) 주술사 모집 중
+party\.slot\[(^\[)+\]\.$	pld					(bool) 나이트 모집 중
+party\.slot\[(^\[)+\]\.$	mnk					(bool) 몽크 모집 중
+party\.slot\[(^\[)+\]\.$	war					(bool) 전사 모집 중
+party\.slot\[(^\[)+\]\.$	drg					(bool) 용기사 모집 중
+party\.slot\[(^\[)+\]\.$	brd					(bool) 음유시인 모집 중
+party\.slot\[(^\[)+\]\.$	whm					(bool) 백마도사 모집 중
+party\.slot\[(^\[)+\]\.$	blm					(bool) 흑마도사 모집 중
+party\.slot\[(^\[)+\]\.$	acn					(bool) 비술사 모집 중
+party\.slot\[(^\[)+\]\.$	smn					(bool) 소환사 모집 중
+party\.slot\[(^\[)+\]\.$	sch					(bool) 학자 모집 중
+party\.slot\[(^\[)+\]\.$	rog					(bool) 쌍검사 모집 중
+party\.slot\[(^\[)+\]\.$	nin					(bool) 닌자 모집 중
+party\.slot\[(^\[)+\]\.$	mch					(bool) 기공사 모집 중
+party\.slot\[(^\[)+\]\.$	drk					(bool) 암흑기사 모집 중
+party\.slot\[(^\[)+\]\.$	ast					(bool) 점성술사 모집 중
+party\.slot\[(^\[)+\]\.$	sam					(bool) 사무라이 모집 중
+party\.slot\[(^\[)+\]\.$	rdm					(bool) 적마도사 모집 중
+party\.slot\[(^\[)+\]\.$	blu					(bool) 청마도사 모집 중
+party\.slot\[(^\[)+\]\.$	gnb					(bool) 건브레이커 모집 중
+party\.slot\[(^\[)+\]\.$	dnc					(bool) 무도가 모집 중
 
 jobs\.$					adv					(int) 모험가
 jobs\.$					gla					(int) 검술사

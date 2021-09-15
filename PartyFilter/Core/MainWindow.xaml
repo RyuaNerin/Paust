@@ -120,7 +120,7 @@
             <CheckBox Grid.Row="2"
                       x:Name="CtlShortName"
                       IsChecked="True"
-                      Content="킨 닉네임 줄이기" />
+                      Content="긴 닉네임 줄이기" />
         </Grid>
 
         <Button Grid.Row="6"

@@ -130,26 +130,35 @@ void filter_core::modify_packet(party_finder_packet* packet)
             std::wstring name_w = utf8_to_wstring((const char*)item->owner_name.data());
             if (name_w.size() >= 5)
             {
-                int len = 0;
-                std::wstringstream name_w_buf;
-                for (auto& c : name_w)
+                size_t len = 0;
+                int char_width = 0;
+                while (len < name_w.size())
                 {
-                    name_w_buf << c;
-                    debug_log(L"%ws => %ws", name_w.c_str(), name_w_buf.str().c_str());
+                    const auto c = name_w.at(len);
 
-                    len += (0 <= c && c <= 128) ? 1 : 2;
-                    if (len >= 7)
+                    char_width += (0 <= c && c <= 128) ? 1 : 2;
+                    if (char_width >= 7)
                     {
                         break;
                     }
+
+                    len++;
                 }
-                name_w_buf << L"..";
+                
+                if (len < name_w.size())
+                {
+#ifdef _DEBUG
+                    const auto name_w_new = name_w.substr(0, len) + L"..";
+                    debug_log(L"%ws -> %ws", name_w.c_str(), name_w_new.c_str());
+                    name_w = name_w_new;
+#else
+                    name_w = name_w.substr(0, len) + L"..";
+#endif
+                    auto neme_new_utf8 = wstring_to_utf8(name_w);
 
-                std::string neme_new_utf8 = wstring_to_utf8(name_w_buf.str());
-
-                item->owner_name.fill(0);
-                debug_log(L"%ws -> %ws", name_w.c_str(), utf8_to_wstring(neme_new_utf8).c_str());
-                neme_new_utf8.copy((char*)item->owner_name.data(), neme_new_utf8.size(), 0);
+                    item->owner_name.fill(0);
+                    neme_new_utf8.copy((char*)item->owner_name.data(), neme_new_utf8.size(), 0);
+                }
             }
         }
     }
