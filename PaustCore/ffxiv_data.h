@@ -26,12 +26,11 @@ typedef struct
     uint16_t content_id;
     uint8_t is_roulette_eq_1;
 
-    PADDING(22);
+    PADDING(21);
 
+    uint8_t objective;
     uint8_t welcome_beginner;
-
-    PADDING(1);
-
+    uint8_t conditions;
     uint8_t settings;
     uint8_t item_rule;
 
@@ -43,7 +42,11 @@ typedef struct
 
     uint16_t min_item_level;
 
-    PADDING(5);
+    PADDING(2);
+
+    uint16_t server_current;
+
+    PADDING(1);
 
     uint8_t slot_count;
 

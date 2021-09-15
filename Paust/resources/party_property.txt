@@ -1,9 +1,9 @@
 party\.$				owner_name			(string) 모집자 이름
 party\.$				description			(string) 파티 모집 이름
 party\.$				remaining_seconds	(int) 남은 모집 시간
-party\.$				content_id			(int) 모집 임무 아이디 (문서 참조)
+party\.$				content_id			(int) 모집 임무 아이디 (content_ids 참조)
 party\.$				is_eden				(bool) 모집 임무가 에덴 영식 9 ~ 12층일 때 true
-party\.$				content_category	(int) 모집 종류 (문서 참조)
+party\.$				content_category	(int) 모집 종류
 party\.$				party_count			(int) 파티 수. (24인의 경우 3)
 party\.$				is_roulette			(bool) true 일 때 무작위 임무
 party\.$				is_private			(bool) 비공개 파티
@@ -14,7 +14,8 @@ party\.$				welcome_beginner	(bool) 초보자 환영 (새싹마크)
 party\.$				minimum_level		(int) 입장 아이템 레벨
 party\.$				undersize_player	(bool) 인원수 제한 해제
 party\.$				silence_echo		(bool) 초월하는 힘 해제
-party\.$				item_rule			(int) 입찰 방식 (0: 기본 / 1: 선입찰 금지 / 2: 파티장 분배)
+party\.$				item_rule			(int) 입찰 방식 (item_rules 참조)
+party\.$				objective			(int) 목적 (objectives 참조)
 party\.$				slot_count			(int) 남은 자리
 party\.$				slot				(array) 파티 자리
 
@@ -142,3 +143,8 @@ content_ids\.$			alexander			(int) 절 알렉산더 토벌전
 item_rules\.$			normal				(int) 일반 전리품 규칙
 item_rules\.$			greed				(int) 선입찰 금지
 item_rules\.$			master				(int) 파티장 분배
+
+objectives\.$			none				(int) 설정 안 함
+objectives\.$			duty_completion		(int) 완료 목적
+objectives\.$			practice			(int) 연습
+objectives\.$			loot				(int) 반복 공략

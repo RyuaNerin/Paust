@@ -100,7 +100,9 @@ namespace Paust.Core
 
             var data = new Injector.IpcInput
             {
-                ShortNameEnabled = false,
+                ShortName = false,
+                HideServer = false,
+                HideOptions = false,
                 FilterEnabled = false,
             };
             Injector.ApplyFilterWithoutInjection(data);
@@ -221,8 +223,10 @@ namespace Paust.Core
 
             var rpcData = new Injector.IpcInput
             {
-                ShortNameEnabled = this.CtlShortName.IsChecked ?? false,
-                FilterEnabled    = this.CtlEnable.IsChecked    ?? false,
+                ShortName     = this.CtlShortName  .IsChecked ?? false,
+                HideServer    = this.CtlHideServer .IsChecked ?? false,
+                HideOptions   = this.CtlHideOptions.IsChecked ?? false,
+                FilterEnabled = this.CtlEnable     .IsChecked ?? false,
             };
             if (rpcData.FilterEnabled)
             {

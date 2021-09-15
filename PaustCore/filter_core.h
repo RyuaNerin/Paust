@@ -28,6 +28,8 @@ private:
 
     std::shared_mutex config_lock;
     std::atomic_bool  config_shortname = false;
+    std::atomic_bool  config_hide_server = false;
+    std::atomic_bool  config_hide_options = false;
     std::atomic_bool  config_filter = false;
     std::string       config_filter_javascript;
 

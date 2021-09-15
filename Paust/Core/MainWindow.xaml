@@ -107,24 +107,31 @@
                        MouseDown="CtlManual_MouseDown" />
         </Grid>
 
-        <Grid Grid.Row="4">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
+        <StackPanel Grid.Row="4">
+            <StackPanel.Resources>
+                <Style TargetType="CheckBox"
+                       BasedOn="{StaticResource {x:Type CheckBox}}">
+                    <Setter Property="Margin" Value="0 0 0 3" />
+                </Style>
+            </StackPanel.Resources>
             
-            <CheckBox Grid.Row="0"
-                      x:Name="CtlEnable"
+            <CheckBox x:Name="CtlEnable"
                       IsChecked="True"
                       Content="커스텀 필터링 사용"
                       FontWeight="Bold" />
 
-            <CheckBox Grid.Row="2"
-                      x:Name="CtlShortName"
+            <CheckBox x:Name="CtlShortName"
                       IsChecked="True"
                       Content="긴 닉네임 줄이기" />
-        </Grid>
+
+            <CheckBox x:Name="CtlHideServer"
+                      IsChecked="False"
+                      Content="타 서버 표시 지우기" />
+
+            <CheckBox x:Name="CtlHideOptions"
+                      IsChecked="False"
+                      Content="새싹 표시, [완료 목적], [잡 중복 없음], [연습] 숨기기" />
+        </StackPanel>
 
         <Button Grid.Row="6"
                 x:Name="CtlAttach"

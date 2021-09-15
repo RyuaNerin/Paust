@@ -18,7 +18,9 @@
 
 - [여기](https://github.com/RyuaNerin/Paust/releases/latest) 에서 마지막 릴리즈를 **적당한 위치** 에 다운로드 해주세요.
 
-- 다운로드 받은 파일을 실행해주세요.
+- 다운로드 받은 파일의 압축을 해제해주세요.
+
+- `Paust.exe` 를 실행해주세요.
 
 ### 긴 닉네임 줄이기
 
@@ -28,16 +30,18 @@
 
 - 반환값이 true 일 때 파티를 표시하고, false 일 때 파티를 숨깁니다.
 
-- 예시1 : 파티 설명에 `2상` 혹은 `파밍`이 포함된 파티 제외
+- 예시1 : 재생 영식에서 파티 설명에 `2상` 혹은 `파밍`이 포함된 파티 제외
 
     ```js
-    party.description.indexOf('2상') == -1 && party.description.indexOf('파밍') == -1
+    party.is_eden && party.description.indexOf('2상') == -1 && party.description.indexOf('파밍') == -1
     ```
 
-- 예시2 : 적마도사를 모집중이며, 파티에 다른 캐스터가 없는 파티만 표시.
+- 예시2 : 재생 영식에서 적마도사를 모집중이며, 파티에 다른 캐스터가 없는 파티만 표시.
 
     ```js
     (function() {
+        if (!party.is_eden) return false;
+        
         var anyCaster = false;
         for (var i = 0; i < party.slot_count; i++) {
             var slot = party.slot[i];
@@ -67,6 +71,7 @@
 - [모집 직업 플래그](#모집_직업_플래그)
 - [알려진 임무](#알려진_임무)
 - [전리품 규칙](#전리품_규칙)
+- [목적](#목적)
 
 #### party 변수
 
@@ -92,6 +97,7 @@ var party = {
     "silence_echo"     : false,     // 초월하는 힘 없음
     "item_rule"        : 0,         // 전리품 규칙 (하단 item_rules 참조)
     "slot_count"       : 8,         // 모집 인원 수
+    "objective"        : 0,         // 파티 목적
 
     // 24인의 경우에는 빈 배열
     "slot": [
@@ -255,3 +261,12 @@ var party = {
 |`item_rules.normal`|`0`|일반 전리품 규칙|
 |`item_rules.greed` |`1`|선입찰 금지|
 |`item_rules.master`|`2`|파티장 분배|
+
+#### 목적
+
+|상수 이름|값|설명|
+|-|-|-|
+|`objectives.none`            |`0`|설정 안 함|
+|`objectives.duty_completion` |`1`|완료 목적|
+|`objectives.practice`        |`2`|연습|
+|`objectives.loot`            |`4`|반복 공략|

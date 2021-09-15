@@ -9,13 +9,18 @@
 #include "defer.h"
 #include "ffxiv_data.h"
 
+constexpr size_t SHORT_NAME_LENGTH                  = 10;
+constexpr size_t SHORT_NAME_LENGTH_WITH_SERVER_MARK =  5; // 타 서버 표시 마크 있을 때
+
 bool filter_core::config_apply(const Json::Value& jo, std::string* error)
 {
     std::unique_lock<std::shared_mutex> _(this->config_lock);
 
     try
     {
-        const auto enabledShortName = jo["shortname_enabled"].asBool();
+        const auto shortname = jo["shortname"].asBool();
+        const auto hide_server = jo["hide_server"].asBool();
+        const auto hide_options = jo["hide_options"].asBool();
 
         if (jo["filter_enabled"].asBool())
         {
@@ -37,7 +42,9 @@ bool filter_core::config_apply(const Json::Value& jo, std::string* error)
             this->config_filter = false;
         }
 
-        this->config_shortname = enabledShortName;
+        this->config_shortname = shortname;
+        this->config_hide_server = hide_server;
+        this->config_hide_options = hide_options;
 
         return true;
     }
@@ -125,8 +132,30 @@ void filter_core::modify_packet(party_finder_packet* packet)
             }
         }
 
+        if (this->config_hide_server)
+        {
+            item->server_current = 0;
+        }
+
+        if (this->config_hide_options)
+        {
+            // 잡 중복 없음 제거
+            item->settings2 = item->settings2 & (UINT8_MAX - (1 << 5));
+
+            // 완료 목적, 연습, 반복공략 제거
+            item->objective = 0;
+
+            // 완료 조건 제거
+            item->conditions = 0;
+
+            // 새싹 제거
+            item->welcome_beginner = 0;
+        }
+
         if (this->config_shortname)
         {
+            const auto len_target = this->config_hide_options ? SHORT_NAME_LENGTH : SHORT_NAME_LENGTH_WITH_SERVER_MARK;
+
             std::wstring name_w = utf8_to_wstring((const char*)item->owner_name.data());
             if (name_w.size() >= 5)
             {
@@ -137,7 +166,7 @@ void filter_core::modify_packet(party_finder_packet* packet)
                     const auto c = name_w.at(len);
 
                     char_width += (0 <= c && c <= 128) ? 1 : 2;
-                    if (char_width >= 7)
+                    if (char_width >= len_target)
                     {
                         break;
                     }
@@ -147,13 +176,7 @@ void filter_core::modify_packet(party_finder_packet* packet)
                 
                 if (len < name_w.size())
                 {
-#ifdef _DEBUG
-                    const auto name_w_new = name_w.substr(0, len) + L"..";
-                    debug_log(L"%ws -> %ws", name_w.c_str(), name_w_new.c_str());
-                    name_w = name_w_new;
-#else
                     name_w = name_w.substr(0, len) + L"..";
-#endif
                     auto neme_new_utf8 = wstring_to_utf8(name_w);
 
                     item->owner_name.fill(0);

@@ -22,8 +22,14 @@ namespace Paust.Core
 
         public class IpcInput
         {
-            [JsonProperty("shortname_enabled")]
-            public bool ShortNameEnabled { get; set; }
+            [JsonProperty("shortname")]
+            public bool ShortName { get; set; }
+
+            [JsonProperty("hide_server")]
+            public bool HideServer { get; set; }
+
+            [JsonProperty("hide_options")]
+            public bool HideOptions { get; set; }
 
             [JsonProperty("filter_enabled")]
             public bool FilterEnabled { get; set; }

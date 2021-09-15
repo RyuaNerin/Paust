@@ -124,6 +124,14 @@ javascript_engine::javascript_engine()
         push_int(idx_item_rules, "master", 2);
     }
 
+    {
+        push_object_global(idx_objectives, "objectives");
+        push_int(idx_objectives, "none", 0);
+        push_int(idx_objectives, "duty_completion", 1);
+        push_int(idx_objectives, "practice", 2);
+        push_int(idx_objectives, "loot", 4);
+    }
+
     this->ctx = ctx;
 }
 
@@ -185,6 +193,9 @@ bool javascript_engine::eval(const party_finder_packet_item* item, const std::st
         // 0기본 1선입찰금지 2파티장분배
         "item_rule": 0,
 
+        // 목적 0설정안함 / 1: 완료 목적 / 2: 연습 / 3: 반복 공략
+        "objective": 0,
+
         // 남은 자리
         "slots": 1,
 
@@ -221,10 +232,10 @@ bool javascript_engine::eval(const party_finder_packet_item* item, const std::st
             push_int(idx_value, "party_count", item->party_count);
 
             const auto is_24 = (item->settings2 & (1 << 2)) != 0;
-            push_bool(idx_value, "is_private" , (item->settings2 & (1 << 1)) != 0);
+            push_bool(idx_value, "is_private" , (item->settings2 & (1 << 1)) == 0);
             push_bool(idx_value, "is_24"      , is_24);
             push_bool(idx_value, "same_server", (item->settings2 & (1 << 3)) != 0);
-            push_bool(idx_value, "no_dup_job" , (item->settings2 & (1 << 4)) != 0);
+            push_bool(idx_value, "no_dup_job" , (item->settings2 & (1 << 5)) != 0);
 
             push_bool(idx_value, "welcome_beginner", item->welcome_beginner == 1);
 
@@ -236,12 +247,14 @@ bool javascript_engine::eval(const party_finder_packet_item* item, const std::st
 
             push_int(idx_value, "slot_count", item->slot_count);
 
+            push_int(idx_value, "objective", item->objective);
+
             {
                 push_array(idx_array, idx_value, "slot");
 
                 if (!is_24)
                 {
-                    for (auto i = 0; i < item->slot_count; i++)
+                    for (size_t i = 0; i < item->slot_count && i < item->slot_user_job.size(); i++)
                     {
                         push_array_item(idx_array_item, idx_array, i);
 
