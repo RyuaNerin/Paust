@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{b46f2157-73ee-42c7-bc6e-a83cdf62a5b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\duktape">
+      <UniqueIdentifier>{bd03c5c3-517c-4797-8d9e-85af5c984184}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\jsoncpp">
+      <UniqueIdentifier>{7b9db9e8-6b45-47fd-9eb8-82b3702c2e59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\minhook">
+      <UniqueIdentifier>{d39167ba-22f7-4f1d-85ff-6c08d55c18a9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="debug_log.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_signature.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="filter_core.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="defer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ffxiv_data.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="javascript_engine.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\buffer.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\MinHook.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\trampoline.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\hde32.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\hde64.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\pstdint.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\table32.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\minhook-1.3.3\src\hde\table64.h">
+      <Filter>lib\minhook</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_log.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="memory_signature.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="filter_core.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ffxiv_data.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="javascript_engine.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\jsoncpp-1.9.4\jsoncpp.cpp">
+      <Filter>lib\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\duktape-2.6.0\duktape.cpp">
+      <Filter>lib\duktape</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\minhook-1.3.3\src\buffer.c">
+      <Filter>lib\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\minhook-1.3.3\src\hook.c">
+      <Filter>lib\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\minhook-1.3.3\src\trampoline.c">
+      <Filter>lib\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\minhook-1.3.3\src\hde\hde32.c">
+      <Filter>lib\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\minhook-1.3.3\src\hde\hde64.c">
+      <Filter>lib\minhook</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PaustCore.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+</Project>

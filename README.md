@@ -1,3 +1,5 @@
+![paust](README/paust.png)
+
 # Paust
 
 - Paust 는 파이널 판타지 14 인게임 파티 찾기에 다양한 필터링과 유틸 기능을 제공하는 프로그램입니다.
@@ -14,7 +16,7 @@
 
 ## 사용방법
 
-- [여기](https://github.com/RyuaNerin/PartyFilter/releases/latest) 에서 마지막 릴리즈를 **적당한 위치** 에 다운로드 해주세요.
+- [여기](https://github.com/RyuaNerin/Paust/releases/latest) 에서 마지막 릴리즈를 **적당한 위치** 에 다운로드 해주세요.
 
 - 다운로드 받은 파일을 실행해주세요.
 
@@ -77,6 +79,7 @@ var party = {
     "remaining_seconds": 3038,      // 모집 남은 시간
     "content_category" : 0,         // 모집 카테고리
     "content_id"       : 748,       // 임무 종류
+    "is_eden"          : false,     // content_id 가 에덴 9층 ~ 12층일 떄 true
     "is_roulette"      : false,     // 무작위 임무?
     "party_count"      : 1,         // 파티 수
     "is_private"       : false,     // 비공개 파티
@@ -89,6 +92,8 @@ var party = {
     "silence_echo"     : false,     // 초월하는 힘 없음
     "item_rule"        : 0,         // 전리품 규칙 (하단 item_rules 참조)
     "slot_count"       : 8,         // 모집 인원 수
+
+    // 24인의 경우에는 빈 배열
     "slot": [
         {
             "in_slot": 19, // 현재 자리에 있는 사람의 직업. 0 이면 모집 중
