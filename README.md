@@ -38,6 +38,11 @@
 
 - 반환값이 true 일 때 파티를 표시하고, false 일 때 파티를 숨깁니다.
 
+- [`Duktape 2.6.0`](https://duktape.org/guide.html) 라이브러리를 사용하여 아래와 같은 스펙을 지원합니다.
+
+    - `ES2015+` 이 적용된 `ECMAScript E5/E5.1` 호환
+    - `ECMAScript 2015 (E6)` 및 `ECMAScript 2016 (E7)` 일부 지원
+
 - 예시1 : 재생 영식에서 파티 설명에 `2상` 혹은 `파밍`이 포함된 파티 제외
 
     ```js
