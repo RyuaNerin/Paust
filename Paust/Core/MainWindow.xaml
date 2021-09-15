@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Icon="/Paust;component/Paust.ico"
         mc:Ignorable="d"
         Title="Paust"
         Height="450"
@@ -130,7 +131,7 @@
 
             <CheckBox x:Name="CtlHideOptions"
                       IsChecked="False"
-                      Content="새싹 표시, [완료 목적], [잡 중복 없음], [연습] 숨기기" />
+                      Content="임무 정보 표시 끄기 (새싹 표시, [완료 목적], [잡 중복 없음], [연습] 등...)"/>
         </StackPanel>
 
         <Button Grid.Row="6"
