@@ -246,9 +246,9 @@ namespace Paust.Core
                     _ = MessageBox.Show(this, $"오류가 발생하였습니다.\n\n{r.Error}", this.Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            catch (Injector.InjectionException)
+            catch (Injector.InjectionException ex)
             {
-                _ = MessageBox.Show(this, "파이널 판타지 14가 실행중이지 않거나 권한이 없습니다.", this.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                _ = MessageBox.Show(this, $"오류가 발생하였습니다.\n\n{ex.Message}", this.Title, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {

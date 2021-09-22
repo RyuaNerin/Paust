@@ -25,11 +25,10 @@ ffxiv_dx11.exe+E8131 - 5B                    - pop rbx
 ffxiv_dx11.exe+E8132 - C3                    - ret
 ffxiv_dx11.exe+E8133 - 48 8B 4B 08           - mov rcx,[rbx+08]
 */
-static const memory_signature party_list_sig("4053 4157 4883EC?? 488BD9 4C8BFA");
-void* party_list_ptr = nullptr;
-
-typedef void(*party_list_delegate)(const void* manager, const void* data);
-party_list_delegate party_list_original;
+typedef void           (*party_list_delegate)(const void* manager, const void* data);
+const memory_signature   party_list_sig ("4053 4157 4883EC?? 488BD9 4C8BFA");
+void*                    party_list_ptr = nullptr;
+party_list_delegate      party_list_original;
 
 void party_list_new(const void* manager, const void* data)
 {

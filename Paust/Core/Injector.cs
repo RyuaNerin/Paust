@@ -18,6 +18,9 @@ namespace Paust.Core
         public class InjectionException : Exception
 #pragma warning restore CA1032, CA2229, CA2237
         {
+            public InjectionException(string message) : base(message)
+            {
+            }
         }
 
         public class IpcInput
@@ -48,13 +51,16 @@ namespace Paust.Core
         {
             var gameWindow = NativeMethods.FindWindowByClass("FFXIVGAME", IntPtr.Zero);
             if (gameWindow == IntPtr.Zero)
-                throw new InjectionException();
+                throw new InjectionException("파이널 판타지 클라이언트를 찾을 수 없습니다.");
 
             if (NativeMethods.GetWindowThreadProcessId(gameWindow, out var pid) == 0)
-                throw new InjectionException();
+                throw new InjectionException("파이널 판타지 클라이언트를 찾을 수 없습니다.");
 
-            if (!CheckInjection(pid, DllName, out _) && !InjectDll(pid))
-                throw new InjectionException();
+            var isInjected = await CheckInjection(pid, DllName);
+            if (!isInjected)
+            {
+                InjectDll(pid);
+            }
 
             return await SendToDll(pid, data);
         }
@@ -67,11 +73,31 @@ namespace Paust.Core
             if (NativeMethods.GetWindowThreadProcessId(gameWindow, out var pid) == 0)
                 return;
 
-            await SendToDll(pid, data);
+            _ = await SendToDll(pid, data);
         }
 
-        private static bool CheckInjection(uint pid, string moduleName, out IntPtr baseAddress)
+        private static async Task<bool> CheckInjection(uint pid, string moduleName)
         {
+            var pipeName = $"PaustCore\\{pid}";
+
+            try
+            {
+                using (var cts = new CancellationTokenSource())
+                {
+                    cts.CancelAfter(TimeSpan.FromSeconds(5));
+
+                    var token = cts.Token;
+                    using (var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous))
+                    {
+                        await pipe.ConnectAsync(1000, token);
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+            }
+            
             var snapEntry = new NativeMethods.MODULEENTRY32
             {
                 dwSize = (uint)Marshal.SizeOf(typeof(NativeMethods.MODULEENTRY32)),
@@ -85,18 +111,16 @@ namespace Paust.Core
                     {
                         if (snapEntry.szModule == moduleName)
                         {
-                            baseAddress = snapEntry.modBaseAddr;
                             return true;
                         }
                     } while (NativeMethods.Module32NextW(snapShot, ref snapEntry));
                 }
             }
 
-            baseAddress = IntPtr.Zero;
             return false;
         }
 
-        private static bool InjectDll(uint pid)
+        private static void InjectDll(uint pid)
         {
             var dllPath = Path.Combine(
                 Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
@@ -105,33 +129,60 @@ namespace Paust.Core
             dllPath += "\0";
 
             var lpKernel32 = NativeMethods.GetModuleHandle("kernel32.dll");
-            if (lpKernel32 == IntPtr.Zero) throw new InjectionException();
+            if (lpKernel32 == IntPtr.Zero)
+            {
+                throw new InjectionException($"GetModuleHandle(\"kernel32.dll\") 실패 (Error Code: {Marshal.GetLastWin32Error()})");
+            }
 
             var lpLoadLibrary = NativeMethods.GetProcAddress(lpKernel32, "LoadLibraryW");
-            if (lpLoadLibrary == IntPtr.Zero) throw new InjectionException();
+            if (lpLoadLibrary == IntPtr.Zero)
+            {
+                throw new InjectionException($"GetProcAddress(\"LoadLibraryW\") 실패 (Error Code: {Marshal.GetLastWin32Error()})");
+            }
 
-            using (var hProcess = new IntPtrWrap(NativeMethods.OpenProcess(NativeMethods.ProcessAccessFlags.All, false, pid)))
+            var hProcessRaw = NativeMethods.OpenProcess(NativeMethods.ProcessAccessFlags.All, false, pid);
+            if (hProcessRaw == IntPtr.Zero)
+            {
+                throw new InjectionException($"OpenProcess 실패 (pid: {pid} / Error Code: {Marshal.GetLastWin32Error()})");
+            }
+            using (var hProcess = new IntPtrWrap(hProcessRaw))
             {
                 var pathSize = new IntPtr(Encoding.Unicode.GetByteCount(dllPath));
                 var pathBuff = Encoding.Unicode.GetBytes(dllPath);
 
-                using (var pBuff = new IntPtrWrap(
-                    NativeMethods.VirtualAllocEx(hProcess, IntPtr.Zero, pathSize, NativeMethods.AllocationType.Commit, NativeMethods.MemoryProtection.ReadWrite),
-                    ptr => NativeMethods.VirtualFreeEx(hProcess, ptr, IntPtr.Zero, NativeMethods.AllocationType.Release))
-                )
+                var pBuffRaw = NativeMethods.VirtualAllocEx(hProcess, IntPtr.Zero, pathSize, NativeMethods.AllocationType.Commit, NativeMethods.MemoryProtection.ReadWrite);
+                if (pBuffRaw == IntPtr.Zero)
                 {
-                    if (!NativeMethods.WriteProcessMemory(hProcess, pBuff, pathBuff, pathSize, out var written) || written != pathSize) return false;
+                    throw new InjectionException($"VirtualAllocEx 실패 (Error Code: {Marshal.GetLastWin32Error()})");
+                }
+                using (var pBuff = new IntPtrWrap(pBuffRaw, ptr => NativeMethods.VirtualFreeEx(hProcess, ptr, IntPtr.Zero, NativeMethods.AllocationType.Release)))
+                {
+                    if (!NativeMethods.WriteProcessMemory(hProcess, pBuff, pathBuff, pathSize, out var written))
+                    {
+                        throw new InjectionException($"WriteProcessMemory 실패 (Error Code: {Marshal.GetLastWin32Error()})");
+                    }
+                    if (written != pathSize)
+                    {
+                        throw new InjectionException($"WriteProcessMemory 실패 (written {(int)written} / {(int)pathSize})");
+                    }
 
-                    using (var hThread = new IntPtrWrap(NativeMethods.CreateRemoteThread(hProcess, IntPtr.Zero, IntPtr.Zero, lpLoadLibrary, pBuff, 0, out var thread_id)))
+                    var hThreadRaw = NativeMethods.CreateRemoteThread(hProcess, IntPtr.Zero, IntPtr.Zero, lpLoadLibrary, pBuff, 0, out var thread_id);
+                    if (hThreadRaw == IntPtr.Zero)
+                    {
+                        throw new InjectionException($"CreateRemoteThread 실패");
+                    }
+                    using (var hThread = new IntPtrWrap(hThreadRaw))
                     {
                         _ = NativeMethods.WaitForSingleObject(hThread, uint.MaxValue);
-                        if (NativeMethods.GetExitCodeThread(hThread, out var exitCode))
-                            return exitCode != 0;
+                        if (NativeMethods.GetExitCodeThread(hThread, out var exitCode) && exitCode != 0)
+                        {
+                            return;
+                        }
+
+                        throw new InjectionException($"LoadLibraryW 실패 (exitCode: {exitCode})");
                     }
                 }
             }
-
-            return false;
         }
 
         private static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
@@ -153,7 +204,6 @@ namespace Paust.Core
                     cts.CancelAfter(TimeSpan.FromSeconds(5));
 
                     var token = cts.Token;
-
 
                     using (var pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous))
                     {
@@ -182,8 +232,6 @@ namespace Paust.Core
             }
             public IntPtrWrap(IntPtr ptr, Action<IntPtr> action)
             {
-                if (ptr == IntPtr.Zero) throw new InjectionException();
-
                 this.Handle = ptr;
                 this.action = action;
             }
@@ -223,75 +271,50 @@ namespace Paust.Core
 
         private static class NativeMethods
         {
-            [DllImport("user32.dll", EntryPoint = "FindWindow", CharSet = CharSet.Unicode)]
+            [DllImport("user32.dll", SetLastError = true, EntryPoint = "FindWindow", CharSet = CharSet.Unicode)]
             public static extern IntPtr FindWindowByClass(string ZeroOnly, IntPtr lpWindowName);
 
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", SetLastError = true)]
             public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern IntPtr OpenProcess(ProcessAccessFlags processAccess, bool bInheritHandle, uint processId);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool CloseHandle(IntPtr hHandle);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern IntPtr CreateToolhelp32Snapshot(SnapshotFlags dwFlags, uint th32ProcessID);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, AllocationType flAllocationType, MemoryProtection flProtect);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesWritten);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, IntPtr dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out IntPtr lpThreadId);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+            [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi)]
             public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool GetExitCodeThread(IntPtr hThread, out uint lpExitCode);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, AllocationType dwFreeType);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool Module32FirstW(IntPtr hSnapshot, ref MODULEENTRY32 lpme);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool Module32NextW(IntPtr hSnapshot, ref MODULEENTRY32 lpme);
 
             [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern IntPtr GetModuleHandle(string lpModuleName);
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-            public struct COPYDATASTRUCT
-            {
-                public IntPtr dwData;
-                public int cbData;
-                public IntPtr lpData;
-            }
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-            public struct PROCESSENTRY32
-            {
-                public const int MAX_PATH = 260;
-                public uint dwSize;
-                public uint cntUsage;
-                public uint th32ProcessID;
-                public IntPtr th32DefaultHeapID;
-                public uint th32ModuleID;
-                public uint cntThreads;
-                public uint th32ParentProcessID;
-                public int pcPriClassBase;
-                public uint dwFlags;
-                [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
-                public string szExeFile;
-            }
 
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             public struct MODULEENTRY32
@@ -313,7 +336,7 @@ namespace Paust.Core
             [Flags]
             public enum ProcessAccessFlags : uint
             {
-                All = 0x001F0FFF,
+                All = 0x001FFFFF,
                 Terminate = 0x00000001,
                 CreateThread = 0x00000002,
                 VirtualMemoryOperation = 0x00000008,
