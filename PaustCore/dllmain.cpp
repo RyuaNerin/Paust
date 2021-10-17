@@ -51,7 +51,7 @@ __declspec(dllexport) BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for
         debug_log(L"party_list_ptr : %x", party_list_ptr);
         if (party_list_ptr == nullptr)
         {
-            debug_log(L"scan failed");
+            debug_log_wcs(L"scan failed");
             return FALSE;
         }
 
@@ -65,11 +65,12 @@ __declspec(dllexport) BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for
                 g_hooked = true;
 
                 MH_CreateHook(party_list_ptr, &party_list_new, (LPVOID*)&party_list_original);
+
                 MH_EnableHook(party_list_ptr);
             }
         }
 
-        debug_log(L"attached");
+        debug_log_wcs(L"attached");
         break;
 
     case DLL_PROCESS_DETACH:
@@ -78,21 +79,24 @@ __declspec(dllexport) BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for
         if (g_hooked)
         {
             MH_DisableHook(party_list_ptr);
+
+
             MH_RemoveHook(party_list_ptr);
+
             MH_Uninitialize();
         }
 
         core_instance.reset();
 
-        debug_log(L"detached");
+        debug_log_wcs(L"detached");
         break;
         
     case DLL_THREAD_ATTACH:
-        debug_log(L"DllMain : DLL_THREAD_ATTACH /// hModule: %x / lpReserved: %x", hModule, lpReserved);
+        //debug_log(L"DllMain : DLL_THREAD_ATTACH /// hModule: %x / lpReserved: %x", hModule, lpReserved);
         break;
 
     case DLL_THREAD_DETACH:
-        debug_log(L"DllMain : DLL_THREAD_DETACH /// hModule: %x / lpReserved: %x", hModule, lpReserved);
+        //debug_log(L"DllMain : DLL_THREAD_DETACH /// hModule: %x / lpReserved: %x", hModule, lpReserved);
         break;
 
     default:

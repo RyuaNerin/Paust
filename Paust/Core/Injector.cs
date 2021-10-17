@@ -37,6 +37,9 @@ namespace Paust.Core
             [JsonProperty("filter_enabled")]
             public bool FilterEnabled { get; set; }
 
+            [JsonProperty("modify_reservation")]
+            public bool ModifyReservation { get; set; }
+
             [JsonProperty("filter_script", NullValueHandling = NullValueHandling.Ignore)]
             public string FilterScript { get; set; }
         }

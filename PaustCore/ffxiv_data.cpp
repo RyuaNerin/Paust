@@ -45,79 +45,52 @@ const party_finder_packet_item* const party_finder_packet_item_sample = (party_f
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::map<const char*, uint32_t> ffxiv_job_id =
+const std::map<const char*, job_id> ffxiv_job_id =
 {
-    { "adv",  0 }, // 모험가
-    { "gla",  1 }, // 검술사
-    { "pgl",  2 }, // 격투사
-    { "mrd",  3 }, // 도끼술사
-    { "lnc",  4 }, // 창술사
-    { "arc",  5 }, // 궁술사
-    { "cnj",  6 }, // 환술사
-    { "thm",  7 }, // 주술사
-    { "crp",  8 }, // 목수
-    { "bsm",  9 }, // 대장장이
-    { "arm", 10 }, // 갑주제작사
-    { "gsm", 11 }, // 보석공예가
-    { "ltw", 12 }, // 가죽공예가
-    { "wvr", 13 }, // 재봉사
-    { "alc", 14 }, // 연금술사
-    { "cul", 15 }, // 요리사
-    { "min", 16 }, // 광부
-    { "btn", 17 }, // 원예가
-    { "fsh", 18 }, // 어부
-    { "pld", 19 }, // 나이트
-    { "mnk", 20 }, // 몽크
-    { "war", 21 }, // 전사
-    { "drg", 22 }, // 용기사
-    { "brd", 23 }, // 음유시인
-    { "whm", 24 }, // 백마도사
-    { "blm", 25 }, // 흑마도사
-    { "acn", 26 }, // 비술사
-    { "smn", 27 }, // 소환사
-    { "sch", 28 }, // 학자
-    { "rog", 29 }, // 쌍검사
-    { "nin", 30 }, // 닌자
-    { "mch", 31 }, // 기공사
-    { "drk", 32 }, // 암흑기사
-    { "ast", 33 }, // 점성술사
-    { "sam", 34 }, // 사무라이
-    { "rdm", 35 }, // 적마도사
-    { "blu", 36 }, // 청마도사
-    { "gnb", 37 }, // 건브레이커
-    { "dnc", 38 }, // 무도가
+    { "adv", JOB_ID_ADV },
+    { "gla", JOB_ID_GLA },
+    { "pgl", JOB_ID_PGL },
+    { "mrd", JOB_ID_MRD },
+    { "lnc", JOB_ID_LNC },
+    { "arc", JOB_ID_ARC },
+    { "cnj", JOB_ID_CNJ },
+    { "thm", JOB_ID_THM },
+    { "crp", JOB_ID_CRP },
+    { "bsm", JOB_ID_BSM },
+    { "arm", JOB_ID_ARM },
+    { "gsm", JOB_ID_GSM },
+    { "ltw", JOB_ID_LTW },
+    { "wvr", JOB_ID_WVR },
+    { "alc", JOB_ID_ALC },
+    { "cul", JOB_ID_CUL },
+    { "min", JOB_ID_MIN },
+    { "btn", JOB_ID_BTN },
+    { "fsh", JOB_ID_FSH },
+    { "pld", JOB_ID_PLD },
+    { "mnk", JOB_ID_MNK },
+    { "war", JOB_ID_WAR },
+    { "drg", JOB_ID_DRG },
+    { "brd", JOB_ID_BRD },
+    { "whm", JOB_ID_WHM },
+    { "blm", JOB_ID_BLM },
+    { "acn", JOB_ID_ACN },
+    { "smn", JOB_ID_SMN },
+    { "sch", JOB_ID_SCH },
+    { "rog", JOB_ID_ROG },
+    { "nin", JOB_ID_NIN },
+    { "mch", JOB_ID_MCH },
+    { "drk", JOB_ID_DRK },
+    { "ast", JOB_ID_AST },
+    { "sam", JOB_ID_SAM },
+    { "rdm", JOB_ID_RDM },
+    { "blu", JOB_ID_BLU },
+    { "gnb", JOB_ID_GNB },
+    { "dnc", JOB_ID_DNC },
 };
 
-#define JOB_FLAG(NAME, VALUE) constexpr uint32_t SLOT_FLAG_##NAME = (VALUE);
-JOB_FLAG(GLD, 1 << 1)
-JOB_FLAG(PGL, 1 << 2)
-JOB_FLAG(MRD, 1 << 3)
-JOB_FLAG(LNC, 1 << 4)
-JOB_FLAG(ARC, 1 << 5)
-JOB_FLAG(CNJ, 1 << 6)
-JOB_FLAG(THM, 1 << 7)
-JOB_FLAG(PLD, 1 << 8)
-JOB_FLAG(MNK, 1 << 9)
-JOB_FLAG(WAR, 1 << 10)
-JOB_FLAG(DRG, 1 << 11)
-JOB_FLAG(BRD, 1 << 12)
-JOB_FLAG(WHM, 1 << 13)
-JOB_FLAG(BLM, 1 << 14)
-JOB_FLAG(ACN, 1 << 15)
-JOB_FLAG(SMN, 1 << 16)
-JOB_FLAG(SCH, 1 << 17)
-JOB_FLAG(ROG, 1 << 18)
-JOB_FLAG(NIN, 1 << 19)
-JOB_FLAG(MCH, 1 << 20)
-JOB_FLAG(DRK, 1 << 21)
-JOB_FLAG(AST, 1 << 22)
-JOB_FLAG(SAM, 1 << 23)
-JOB_FLAG(RDM, 1 << 24)
-JOB_FLAG(BLU, 1 << 25)
-JOB_FLAG(GNB, 1 << 26)
-JOB_FLAG(DNC, 1 << 27)
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const std::map<const char*, uint32_t> ffxiv_slot_flag =
+const std::map<const char*, slot_flag> ffxiv_slot_flag =
 {
     { "_tank"        , SLOT_FLAG_GLD | SLOT_FLAG_MRD | SLOT_FLAG_PLD | SLOT_FLAG_WAR | SLOT_FLAG_DRK | SLOT_FLAG_GNB },
 
@@ -161,33 +134,59 @@ const std::map<const char*, uint32_t> ffxiv_slot_flag =
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// contentfindercondition.exh_ko.csv
 
-#define CONTENT(NAME, VALUE) constexpr uint32_t CONTENT_##NAME = (VALUE);
-CONTENT(E9S , 750)
-CONTENT(E10S, 748)
-CONTENT(E11S, 752)
-CONTENT(E12S, 759)
+const std::map<slot_flag, job_id> ffxiv_slot_2_job = {
+    { SLOT_FLAG_GLD, JOB_ID_GLA },
+    { SLOT_FLAG_PGL, JOB_ID_PGL },
+    { SLOT_FLAG_MRD, JOB_ID_MRD },
+    { SLOT_FLAG_LNC, JOB_ID_LNC },
+    { SLOT_FLAG_ARC, JOB_ID_ARC },
+    { SLOT_FLAG_CNJ, JOB_ID_CNJ },
+    { SLOT_FLAG_THM, JOB_ID_THM },
+    { SLOT_FLAG_PLD, JOB_ID_PLD },
+    { SLOT_FLAG_MNK, JOB_ID_MNK },
+    { SLOT_FLAG_WAR, JOB_ID_WAR },
+    { SLOT_FLAG_DRG, JOB_ID_DRG },
+    { SLOT_FLAG_BRD, JOB_ID_BRD },
+    { SLOT_FLAG_WHM, JOB_ID_WHM },
+    { SLOT_FLAG_BLM, JOB_ID_BLM },
+    { SLOT_FLAG_ACN, JOB_ID_ACN },
+    { SLOT_FLAG_SMN, JOB_ID_SMN },
+    { SLOT_FLAG_SCH, JOB_ID_SCH },
+    { SLOT_FLAG_ROG, JOB_ID_ROG },
+    { SLOT_FLAG_NIN, JOB_ID_NIN },
+    { SLOT_FLAG_MCH, JOB_ID_MCH },
+    { SLOT_FLAG_DRK, JOB_ID_DRK },
+    { SLOT_FLAG_AST, JOB_ID_AST },
+    { SLOT_FLAG_SAM, JOB_ID_SAM },
+    { SLOT_FLAG_RDM, JOB_ID_RDM },
+    { SLOT_FLAG_BLU, JOB_ID_BLU },
+    { SLOT_FLAG_GNB, JOB_ID_GNB },
+    { SLOT_FLAG_DNC, JOB_ID_DNC },
+};
 
-const std::map<const char*, uint32_t> ffxiv_content_id =
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const std::map<const char*, content_id> ffxiv_content_id =
 {
-    { "e9s" , CONTENT_E9S  }, // 희망의 낙원 에덴: 재생편(영웅) 1
-    { "e10s", CONTENT_E10S }, // 희망의 낙원 에덴: 재생편(영웅) 2
-    { "e11s", CONTENT_E11S }, // 희망의 낙원 에덴: 재생편(영웅) 3
-    { "e12s", CONTENT_E12S }, // 희망의 낙원 에덴: 재생편(영웅) 4
+    { "e9s" , CONTENT_ID_E9S  }, // 희망의 낙원 에덴: 재생편(영웅) 1
+    { "e10s", CONTENT_ID_E10S }, // 희망의 낙원 에덴: 재생편(영웅) 2
+    { "e11s", CONTENT_ID_E11S }, // 희망의 낙원 에덴: 재생편(영웅) 3
+    { "e12s", CONTENT_ID_E12S }, // 희망의 낙원 에덴: 재생편(영웅) 4
 
-    { "gunnhildr",  760}, // 군힐드 사원
-    { "gunnhildrs", 761}, // 군힐드 사원 (영웅)
+    { "gunnhildr",  CONTENT_ID_GUNNHILDR  }, // 군힐드 사원
+    { "gunnhildrs", CONTENT_ID_GUNNHILDRS }, // 군힐드 사원 (영웅)
 
-    { "leviathan", 776 }, // 환 리바이어선
-    { "diamond",   782 },// 다이아몬드
+    { "leviathan", CONTENT_ID_LEVIATHAN }, // 환 리바이어선
+    { "diamond",   CONTENT_ID_DIAMOND   },// 다이아몬드
 
-    { "bahamut",   280 }, // 절 바하
-    { "ultima",    539 }, // 절 테마
-    { "alexander", 694 }, // 절 알렉
+    { "bahamut",   CONTENT_ID_BAHAMUT   }, // 절 바하
+    { "ultima",    CONTENT_ID_ULTIMA    }, // 절 테마
+    { "alexander", CONTENT_ID_ALEXANDER }, // 절 알렉
 };
 
 bool is_eden_raid(uint32_t content)
 {
-    return content == CONTENT_E9S || content == CONTENT_E10S || content == CONTENT_E11S || content == CONTENT_E12S;
+    return content == CONTENT_ID_E9S || content == CONTENT_ID_E10S || content == CONTENT_ID_E11S || content == CONTENT_ID_E12S;
 }

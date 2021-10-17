@@ -21,6 +21,7 @@ bool filter_core::config_apply(const Json::Value& jo, std::string* error)
         const auto shortname = jo["shortname"].asBool();
         const auto hide_server = jo["hide_server"].asBool();
         const auto hide_options = jo["hide_options"].asBool();
+        const auto modify_reservation = jo["modify_reservation"].asBool();
 
         if (jo["filter_enabled"].asBool())
         {
@@ -45,6 +46,7 @@ bool filter_core::config_apply(const Json::Value& jo, std::string* error)
         this->config_shortname = shortname;
         this->config_hide_server = hide_server;
         this->config_hide_options = hide_options;
+        this->config_modify_reservation = modify_reservation;
 
         return true;
     }
@@ -129,6 +131,36 @@ void filter_core::modify_packet(party_finder_packet* packet)
             {
                 memset(item, 0, sizeof(party_finder_packet_item));
                 continue;
+            }
+        }
+
+        if (this->config_modify_reservation)
+        {
+            for (size_t i = 0; i < item->slot_user_job.size(); i++)
+            {
+                if (item->slot_user_job[i] != 0)
+                {
+                    continue;
+                }
+                // 확직인가?
+                int available_slot_jobs = 0;
+                slot_flag available_slot_flag = 0;
+                job_id available_slot_job = 0;
+                for (auto& v : ffxiv_slot_2_job)
+                {
+                    if ((item->slot_available_flag[i] & v.first) != 0)
+                    {
+                        available_slot_jobs++;
+                        available_slot_flag = v.first;
+                        available_slot_job = v.second;
+                    }
+                }
+
+                if (available_slot_jobs == 1)
+                {
+                    item->slot_available_flag[i] = available_slot_flag;
+                    item->slot_user_job[i] = available_slot_job;
+                }
             }
         }
 

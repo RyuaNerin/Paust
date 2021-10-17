@@ -223,10 +223,11 @@ namespace Paust.Core
 
             var rpcData = new Injector.IpcInput
             {
-                ShortName     = this.CtlShortName  .IsChecked ?? false,
-                HideServer    = this.CtlHideServer .IsChecked ?? false,
-                HideOptions   = this.CtlHideOptions.IsChecked ?? false,
-                FilterEnabled = this.CtlEnable     .IsChecked ?? false,
+                ShortName         = this.CtlShortName        .IsChecked ?? false,
+                HideServer        = this.CtlHideServer       .IsChecked ?? false,
+                HideOptions       = this.CtlHideOptions      .IsChecked ?? false,
+                FilterEnabled     = this.CtlEnable           .IsChecked ?? false,
+                ModifyReservation = this.CtlModifyReservation.IsChecked ?? false,
             };
             if (rpcData.FilterEnabled)
             {

@@ -10,21 +10,20 @@ void debug_log(const wchar_t* fmt, ...)
     va_list	va;
     va_start(va, fmt);
 
-    size_t len = std::wcslen(L"PaustCore: ") + vswprintf(nullptr, 0, fmt, va) + 2;
+    size_t len = vswprintf(nullptr, 0, fmt, va);
     std::wstring wcs;
     wcs.resize(len);
 
-    len = wsprintfW(wcs.data(), L"PaustCore: ");
-    wvsprintfW(wcs.data() + len, fmt, va);
+    wvsprintfW(wcs.data(), fmt, va);
 
     va_end(va);
 
-    OutputDebugStringW(wcs.c_str());
+    debug_log_wcs(wcs);
 }
 
-void debug_log(const std::wstring& str)
+void debug_log_wcs(const std::wstring& str)
 {
-    std::wstring wcs = L"PaustCore: " + str;
+    std::wstring wcs = L"PaustCore: " + str + L"\n";
     OutputDebugStringW(wcs.c_str());
 }
 
