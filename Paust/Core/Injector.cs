@@ -125,6 +125,51 @@ namespace Paust.Core
 
         private static void InjectDll(uint pid)
         {
+            //////////////////////////////////////////////////////////////////////////////////////////
+
+            var tp = new NativeMethods.TOKEN_PRIVILEGES();
+
+            var res = NativeMethods.OpenProcessToken(
+                NativeMethods.GetCurrentProcess(),
+                NativeMethods.TOKEN_ADJUST_PRIVILEGES | NativeMethods.TOKEN_QUERY,
+                out var hToken
+            );
+            if (!res)
+            {
+                throw new InjectionException($"OpenProcessToken 실패 (Error Code: {Marshal.GetLastWin32Error()})");
+            }
+
+            var luid = new NativeMethods.LUID();
+            res = NativeMethods.LookupPrivilegeValue(null, "SeDebugPrivilege", ref luid);
+            if (!res)
+            {
+                throw new InjectionException($"LookupPrivilegeValue 실패 (Error Code: {Marshal.GetLastWin32Error()})");
+            }
+
+            tp.PrivilegeCount = 1;
+            tp.Luid = luid;
+            tp.Attributes = NativeMethods.SE_PRIVILEGE_ENABLED;
+
+            res = NativeMethods.AdjustTokenPrivileges(
+                hToken,
+                false,
+                ref tp,
+                Marshal.SizeOf(tp),
+                IntPtr.Zero,
+                IntPtr.Zero
+            );
+            if (!res)
+            {
+                throw new InjectionException($"AdjustTokenPrivileges 실패 (Error Code: {Marshal.GetLastWin32Error()})");
+            }
+
+            if (Marshal.GetLastWin32Error() == NativeMethods.ERROR_NOT_ALL_ASSIGNED)
+            {
+                throw new InjectionException($"ERROR_NOT_ALL_ASSIGNED");
+            }
+
+            //////////////////////////////////////////////////////////////////////////////////////////
+
             var dllPath = Path.Combine(
                 Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 DllName
@@ -319,6 +364,29 @@ namespace Paust.Core
             [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern IntPtr GetModuleHandle(string lpModuleName);
 
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern IntPtr GetCurrentProcess();
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+
+            [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool AdjustTokenPrivileges(
+                IntPtr tokenhandle,
+                [MarshalAs(UnmanagedType.Bool)] bool disableAllPrivileges,
+                [MarshalAs(UnmanagedType.Struct)] ref TOKEN_PRIVILEGES newstate,
+                int bufferlength,
+                IntPtr previousState,
+                IntPtr returnlength);
+
+            [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+            public static extern bool LookupPrivilegeValue(
+                string host,
+                string name,
+                ref LUID pluid);
+
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             public struct MODULEENTRY32
             {
@@ -396,6 +464,28 @@ namespace Paust.Core
                 NoCacheModifierflag = 0x200,
                 WriteCombineModifierflag = 0x400
             }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct LUID
+            {
+                internal int LowPart;
+                internal uint HighPart;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct TOKEN_PRIVILEGES
+            {
+                internal int PrivilegeCount;
+                internal LUID Luid;
+                internal int Attributes;
+            }
+
+            public const uint TOKEN_ADJUST_PRIVILEGES = 0x0020;
+            public const uint TOKEN_QUERY = 0x0008;
+            
+            public const int SE_PRIVILEGE_ENABLED = 0x00000002;
+
+            public const int ERROR_NOT_ALL_ASSIGNED = 1300;
         }
     }
 }
