@@ -2,7 +2,9 @@
 
 # Paust
 
-- Paust 는 파이널 판타지 14 인게임 파티 찾기에 다양한 필터링과 유틸 기능을 제공하는 프로그램입니다.
+- Paust는 파이널 판타지 14 인게임 파티 찾기에 다양한 필터링과 유틸 기능을 제공합니다.
+
+- Paust는 DalamudKr의 확장 프로그램으로 제공됩니다.
 
 - 이 프로그램의 사용으로 인한 모든 피해는 사용자에게 있고, 제작자는 그 어떤 책임도 지지 않습니다.
 
@@ -12,21 +14,17 @@
 
 ## 요구 사항
 
-- Windows 10 환경에서 실행하는 DX11 클라언트.
+- DalamudKr가 적용된 dx11 클라이언트
 
 ## 사용방법
 
-- [여기](https://github.com/RyuaNerin/Paust/releases/latest) 에서 마지막 릴리즈를 **적당한 위치** 에 다운로드 해주세요.
-
-- 다운로드 받은 파일의 압축을 해제해주세요.
-
-- `Paust.exe` 를 실행해주세요.
+- DAlamudKr 플러그인 목록에서 `Paust`를 검색하여 설치합니다.
 
 ### 긴 닉네임 줄이기
 
 ![shortname](README/shortname.png)
 
-### 파 서버 표시 끄기
+### 타 서버 표시 끄기
 
 ![hideserver](README/hideserver.png)
 
@@ -38,10 +36,9 @@
 
 - 반환값이 true 일 때 파티를 표시하고, false 일 때 파티를 숨깁니다.
 
-- [`Duktape 2.6.0`](https://duktape.org/guide.html) 라이브러리를 사용하여 아래와 같은 스펙을 지원합니다.
+- [`Jint`]https://github.com/sebastienros/jint) 라이브러리를 사용하여 아래와 같은 스펙을 지원합니다.
 
-    - `ES2015+` 이 적용된 `ECMAScript E5/E5.1` 호환
-    - `ECMAScript 2015 (E6)` 및 `ECMAScript 2016 (E7)` 일부 지원
+    - `ECMAScript 5.1 (ES5)` 호환
 
 - 예시1 : 재생 영식에서 파티 설명에 `2상` 혹은 `파밍`이 포함된 파티 제외
 

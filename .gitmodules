@@ -1,0 +1,4 @@
+[submodule "lib/jint"]
+	path = lib/jint
+	url = git@github.com:sebastienros/jint.git
+	branch = release/2.x
