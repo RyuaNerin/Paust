@@ -41,6 +41,8 @@ namespace Paust.Game.Data
         BLU = 36, // 청마도사
         GNB = 37, // 건브레이커
         DNC = 38, // 무도가
+        RPR = 39, // 리퍼
+        SGE = 40, // 현자
     }
     internal class JobConst
     {
@@ -88,5 +90,7 @@ namespace Paust.Game.Data
         public int blu => (int)Job.BLU;
         public int gnb => (int)Job.GNB;
         public int dnc => (int)Job.DNC;
+        public int rpr => (int)Job.RPR;
+        public int sge => (int)Job.SGE;
     }
 }

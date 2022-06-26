@@ -131,6 +131,9 @@ namespace Paust.PartyFinder
                     this.blu = (slot & SlotConst.Instance.blu) != 0;
                     this.gnb = (slot & SlotConst.Instance.gnb) != 0;
                     this.dnc = (slot & SlotConst.Instance.dnc) != 0;
+                    this.dnc = (slot & SlotConst.Instance.dnc) != 0;
+                    this.sge = (slot & SlotConst.Instance.sge) != 0;
+                    this.rpr = (slot & SlotConst.Instance.rpr) != 0;
                 }
 
                 int available_jobs = 0;
@@ -183,6 +186,8 @@ namespace Paust.PartyFinder
             public bool blu { get; }
             public bool gnb { get; }
             public bool dnc { get; }
+            public bool sge { get; }
+            public bool rpr { get; }
 
             public int in_slot { get; }
             public int _raw { get; }

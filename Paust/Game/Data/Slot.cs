@@ -31,6 +31,8 @@ namespace Paust.Game.Data
         BLU = 1 << 25,
         GNB = 1 << 26,
         DNC = 1 << 27,
+        RPR = 1 << 28,
+        SGE = 1 << 29,
     }
 
     internal class SlotConst
@@ -69,6 +71,8 @@ namespace Paust.Game.Data
             { Slot.BLU, Job.BLU },
             { Slot.GNB, Job.GNB },
             { Slot.DNC, Job.DNC },
+            { Slot.RPR, Job.RPR },
+            { Slot.SGE, Job.SGE },
         };
 
         public int _tank =
@@ -80,13 +84,15 @@ namespace Paust.Game.Data
         public int _heal =
             (int)Slot.CNJ | (int)Slot.WHM |
             (int)Slot.SCH |
-            (int)Slot.AST;
+            (int)Slot.AST |
+            (int)Slot.SGE;
 
         public int _deal =
             (int)Slot.PGL | (int)Slot.MNK |
             (int)Slot.LNC | (int)Slot.DRG |
             (int)Slot.ROG | (int)Slot.NIN |
             (int)Slot.SAM |
+            (int)Slot.RPR |
             (int)Slot.ARC | (int)Slot.BRD |
             (int)Slot.MCH |
             (int)Slot.DNC |
@@ -99,7 +105,8 @@ namespace Paust.Game.Data
             (int)Slot.PGL | (int)Slot.MNK |
             (int)Slot.LNC | (int)Slot.DRG |
             (int)Slot.ROG | (int)Slot.NIN |
-            (int)Slot.SAM;
+            (int)Slot.SAM |
+            (int)Slot.RPR;
 
         public int _deal_range =
             (int)Slot.ARC | (int)Slot.BRD |
@@ -139,5 +146,7 @@ namespace Paust.Game.Data
         public int blu = (int)Slot.BLU;
         public int gnb = (int)Slot.GNB;
         public int dnc = (int)Slot.DNC;
+        public int rpr = (int)Slot.RPR;
+        public int sge = (int)Slot.SGE;
     }
 }

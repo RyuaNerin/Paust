@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
-using Dalamud.Game.Command;
 using Dalamud.Game.Gui.PartyFinder;
 using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
@@ -17,19 +15,15 @@ namespace Paust
         private const int ShortNameLength = 10;
         private const int ShortNameLengthWithServerMark = 5;
 
-        private const string CommandConfigEn = "/paust";
-        private const string CommandConfigKr = "/파우스트";
-        private const string CommandPresetEn = "/pp";
-        private const string CommandPresetKr = "/프리셋";
-
         public string Name => "Paust";
 
-        internal PluginConfig Config      { get; }
-        internal JintWrapper   JintWrapper { get; }
+        internal PluginConfig  Config        { get; }
+        internal JintWrapper   JintWrapper   { get; }
+        internal PluginCommand Command       { get; }
+        internal PluginUI      ConfigWindow      { get; }
 
         private readonly IntPtr memory;
         private readonly WindowSystem windowSystem = new("Paust");
-        private readonly PluginUI pluginUI;
 
         public Plugin(DalamudPluginInterface pluginInterface)
         {
@@ -45,27 +39,12 @@ namespace Paust
                 DalamudInstance.PartyFinderGui.Enable();
                 DalamudInstance.PartyFinderGui.ReceiveRawPacket += this.PartyFinderGui_ReceiveRawPacket;
 
-                this.pluginUI = new PluginUI(this);
-                this.windowSystem.AddWindow(this.pluginUI);
+                this.ConfigWindow = new PluginUI(this);
+                this.windowSystem.AddWindow(this.ConfigWindow);
                 DalamudInstance.PluginInterface.UiBuilder.Draw += this.OnDraw;
                 DalamudInstance.PluginInterface.UiBuilder.OpenConfigUi += this.UiBuilder_OpenConfigUi;
 
-                var commandConfig = new CommandInfo(this.OpenWindow)
-                {
-                    HelpMessage = "Paust 설정 창을 엽니다.",
-                    ShowInHelp = true,
-                };
-                var commandPreset = new CommandInfo(this.ChangeFilter)
-                {
-                    HelpMessage = "Paust 프로필을 변경합니다.",
-                    ShowInHelp = true,
-                };
-
-                DalamudInstance.Commands.AddHandler(CommandConfigEn, commandConfig);
-                DalamudInstance.Commands.AddHandler(CommandConfigKr, commandConfig);
-
-                DalamudInstance.Commands.AddHandler(CommandPresetEn, commandPreset);
-                DalamudInstance.Commands.AddHandler(CommandPresetKr, commandPreset);
+                this.Command = new PluginCommand(this);
             }
             catch (Exception ex)
             {
@@ -95,16 +74,12 @@ namespace Paust
             {
                 this.Config.Save();
 
-                DalamudInstance.Commands.RemoveHandler(CommandConfigEn);
-                DalamudInstance.Commands.RemoveHandler(CommandConfigKr);
-
-                DalamudInstance.Commands.RemoveHandler(CommandPresetEn);
-                DalamudInstance.Commands.RemoveHandler(CommandPresetKr);
+                this.Command.Dispose();
 
                 DalamudInstance.PluginInterface.UiBuilder.Draw -= this.OnDraw;
                 DalamudInstance.PluginInterface.UiBuilder.OpenConfigUi -= this.UiBuilder_OpenConfigUi;
                 this.windowSystem.RemoveAllWindows();
-                this.pluginUI.Dispose();
+                this.ConfigWindow.Dispose();
 
                 DalamudInstance.PartyFinderGui.ReceiveRawPacket -= this.PartyFinderGui_ReceiveRawPacket;
 
@@ -114,7 +89,7 @@ namespace Paust
 
         private void UiBuilder_OpenConfigUi()
         {
-            this.pluginUI.IsOpen = true;
+            this.ConfigWindow.IsOpen = true;
         }
 
         private void OnDraw()
@@ -125,35 +100,6 @@ namespace Paust
             }
             catch
             {
-            }
-        }
-
-        private void OpenWindow(string command, string args)
-        {
-            this.pluginUI.IsOpen = true;
-        }
-
-        private void ChangeFilter(string command, string args)
-        {
-            lock (this.Config)
-            {
-                if (string.IsNullOrWhiteSpace(args))
-                {
-                    this.Config.SelectedPreset = Guid.Empty;
-                }
-                else
-                {
-                    try
-                    {
-                        this.Config.SelectedPreset = this.Config.Presets.First(e => e.Value.Name == args).Key;
-                    }
-                    catch (Exception)
-                    {
-                        this.Config.SelectedPreset = Guid.Empty;
-                    }
-                }
-
-                DalamudInstance.ChatGui.Print($"Paust: {} 으로 변경하였습니다.")
             }
         }
 
@@ -281,7 +227,7 @@ namespace Paust
 
                             if (len < str.Length)
                             {
-                                str = str.Substring(0, len);
+                                str = str.Substring(0, len) + "..";
 
                                 var strBytes = SeString.ToBytes(str);
 

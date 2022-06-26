@@ -21,5 +21,13 @@ namespace Paust.Game.Data
         public int BAHAMUT => 280;
         public int ULTIMA => 539;
         public int ALEXANDER => 694;
+
+        public int Hydaelyns => 996;
+        public int Zodiarks => 993;
+
+        public int P1S => 1003;
+        public int P2S => 1009;
+        public int P3S => 1007;
+        public int P4S => 1005;
     }
 }

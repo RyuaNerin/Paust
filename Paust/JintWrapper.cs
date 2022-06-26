@@ -127,7 +127,6 @@ namespace Paust
                 this.Engine.Execute(script);
 
                 var result = this.Engine.GetCompletionValue();
-                PluginLog.Debug("result : {0}", result);
 
                 if (result.Type == Types.Boolean)
                 {
